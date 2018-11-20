@@ -1,0 +1,111 @@
+Skip to content
+ 
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ @KiddingJust Sign out
+0
+0 0 KiddingJust/1004
+ Code  Issues 0  Pull requests 0  Projects 0  Wiki  Insights  Settings
+1004/fn03.html
+818a39d  on 8 Oct
+@KiddingJust KiddingJust Initial commit
+     
+90 lines (76 sloc)  2.66 KB
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!-- 지도를 표시할 div 입니다 -->
+<div id="map" style="width:100%;height:50vh;"></div>
+
+<style>
+    .wrapper{
+        color: white;
+        display: flex;
+        width: 100%;
+        height: 50vh;
+        justify-content: center;
+        align-items: center;
+        background-color: cadetblue;
+    }
+    .listUL{
+        list-style: none;
+        color: white;
+        font-size: 2em;
+    }
+    .listUL li{
+        border: 1px solid white;
+    }
+</style>
+
+<div class="wrapper">
+    <ul class="listUL"></ul>
+</div>
+
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=dc56ff6a9fc8065d98b43e87a79e20a4"></script>
+<script>
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new daum.maps.LatLng(37.570400, 126.984827), // 지도의 중심좌표
+            level: 3 // 지도의 확대 레벨
+        };
+    var map = new daum.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+    // 마커가 표시될 위치입니다
+    var markerPosition  = new daum.maps.LatLng(37.570400, 126.984827);
+</script>
+
+<!--dao 갖고오기-->
+<script src = "../js/store.js"></script>
+
+<script>
+    //가게를 가지고 오면, 루프를 통해 listUL에 뿌려줌
+    dao.getList(function(stores){
+        var listUL = document.querySelector(".listUL"), str = '', idx = 0;
+        //커스텀 뭐시기... 속성을 custom으로 주는 것
+        for(var store of stores) {
+            var storeStr = JSON.stringify(store);
+            str += "<li data-idx='"+ idx++ +"'>" + store.title + "</li>";
+        }
+        //루프로 목록 가져와서 listUL에 뿌림
+        listUL.innerHTML = str;
+    });
+    //false는 버블링만 줄 것이기 때문(캡쳐링? 은 안 주니까 false).
+    //getAttribute~ 는 속성값을 불러오는 것.
+    document.querySelector(".listUL").addEventListener("click",
+        function (e){
+            var idx = e.target.getAttribute("data-idx");
+            dao.showMarker(idx);    //클릭하면 showMarker보여주도록.
+        }, false);
+    //다음지도 API에서 따옿ㅁ.
+    daum.maps.event.addListener(map, 'dragend', function() {
+        // 지도 중심좌표를 얻어옵니다
+        var latlng = map.getCenter();
+        console.log(latlng);
+        //자바스크립트 객체 만들기. 가까운 곳 찾는 것
+        var nnstore = dao.findNNStore({lat:latlng.jb, lng:latlng.ib});
+        console.log(nnstore);
+        //store 받으면 이거 기준으로 marker 뿌려주는 것만 추가하면 완벽하게따
+    });
+</script>
+</body>
+</html>
+© 2018 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Help
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Press h to open a hovercard with more details.
